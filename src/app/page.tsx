@@ -8,11 +8,9 @@ import { toPng } from "html-to-image";
 type QRCodeRef = HTMLDivElement | null;
 
 const QrCodeGenerator: React.FC = () => {
-  // Define the state types
   const [qrCode, setQrCode] = useState<string>("");
   const [input, setInput] = useState<string>("");
-
-  // Use the ref with the specified type
+ 
   const qrRef = useRef<QRCodeRef>(null);
 
   const handleQrCodeGenerator = () => {
@@ -22,7 +20,12 @@ const QrCodeGenerator: React.FC = () => {
 
   const handleDownload = async () => {
     if (qrRef.current) {
-      const dataUrl = await toPng(qrRef.current);
+      // Set the size to fit within the container
+      const dataUrl = await toPng(qrRef.current, {
+        canvasWidth: qrRef.current.clientWidth,
+        canvasHeight: qrRef.current.clientHeight,
+        backgroundColor: "#fff",
+      });
       saveAs(dataUrl, "qr-code.png");
     }
   };
@@ -58,8 +61,15 @@ const QrCodeGenerator: React.FC = () => {
           </button>
         </div>
         {qrCode && (
-          <div ref={qrRef} className="mt-6 p-10 bg-white border rounded-md ">
-            <QRCode value={qrCode} size={400} bgColor="#fff" />
+          <div
+            ref={qrRef}
+            className="py-6 px-6 bg-white border rounded-md flex justify-center"
+          >
+            <QRCode
+              value={qrCode}
+              className="w-full h-full max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:max-w-[400px]"
+              bgColor="#fff"
+            />
           </div>
         )}
       </div>
